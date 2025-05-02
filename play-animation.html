@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>アニメーション再生テスト</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+</head>
+<body>
+  <a-scene>
+    <a-entity
+      id="myModel"
+      gltf-model="./akaei4anime2.glb"
+      position="0 1.5 -3"
+      scale="3 3 3"
+    ></a-entity>
+    <a-sky color="#ECECEC"></a-sky>
+  </a-scene>
+  
+  <div style="position: fixed; bottom: 10px; left: 10px; background: white; padding: 10px; border-radius: 5px;">
+    <div>
+      <button id="playAnim1">アニメーション1を再生</button>
+      <input id="anim1Name" type="text" value="circle" placeholder="anime1">
+    </div>
+    <div style="margin-top: 10px;">
+      <button id="playAnim2">アニメーション2を再生</button>
+      <input id="anim2Name" type="text" value="down" placeholder="anime2">
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const modelEl = document.getElementById('myModel');
+      
+      // アニメーション1を再生
+      document.getElementById('playAnim1').addEventListener('click', function() {
+        const animName = document.getElementById('anim1Name').value;
+        console.log(`アニメーション「${animName}」を再生します`);
+        modelEl.setAttribute('animation-mixer', {
+          clip: animName,
+          loop: 'repeat',
+          clampWhenFinished: false,
+          timeScale: 1.0
+        });
+      });
+      
+      // アニメーション2を再生
+      document.getElementById('playAnim2').addEventListener('click', function() {
+        const animName = document.getElementById('anim2Name').value;
+        console.log(`アニメーション「${animName}」を再生します`);
+        modelEl.setAttribute('animation-mixer', {
+          clip: animName,
+          loop: 'repeat',
+          clampWhenFinished: false,
+          timeScale: 1.0
+        });
+      });
+      
+      // モデル読み込み完了時にアニメーション名を表示
+      modelEl.addEventListener('model-loaded', function() {
+        console.log('モデルが読み込まれました');
+        const model = modelEl.getObject3D('mesh');
+        if (model && model.animations) {
+          console.log('利用可能なアニメーション:');
+          model.animations.forEach((clip, index) => {
+            console.log(`${index}: ${clip.name}`);
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

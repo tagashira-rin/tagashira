@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GLB Multiple Animations in A-Frame</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <!-- animation-mixerコンポーネントを明示的にインポート -->
+  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+</head>
+<body>
+  <a-scene>
+    <a-entity
+      id="myModel"
+      gltf-model="./akaei4anime3.glb"
+      position="0 1.5 -3"
+      scale="3 3 3"
+      animation-mixer="clip: anime1; loop: repeat"
+    ></a-entity>
+    <a-sky color="#ECECEC"></a-sky>
+  </a-scene>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modelEl = document.getElementById('myModel');
+      
+      // モデルの読み込みが完了してからアニメーション制御を行う
+      modelEl.addEventListener('model-loaded', function () {
+        console.log('モデルが正常に読み込まれました');
+        
+        // 5秒後にアニメーションを切り替える
+        setTimeout(function () {
+          console.log('アニメーション2(anime2)に切り替えます');
+          modelEl.setAttribute('animation-mixer', 'clip', 'anime2');
+        }, 5000); // 5000ミリ秒 = 5秒
+      });
+    });
+  </script>
+</body>
+</html>
