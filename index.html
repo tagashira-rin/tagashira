@@ -18,6 +18,21 @@
         right: 20px;
         z-index: 999;
       }
+      /* ローディングインジケータ */
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 24px;
+        z-index: 9999;
+      }
     </style>
     <script>
       // ホットスポットコンポーネントの定義
@@ -26,26 +41,21 @@
           target: {type: 'string'},
           thumbnail: {type: 'string'}
         },
-
         init: function() {
           const data = this.data;
           const el = this.el;
-
           // マウスオーバー時のスケール変更
           el.addEventListener('mouseenter', function() {
             el.setAttribute('scale', '1.2 1.2 1.2');
           });
-
           // マウスアウト時のスケール戻し
           el.addEventListener('mouseleave', function() {
             el.setAttribute('scale', '1 1 1');
           });
-
           // クリック時の画像切り替え
           el.addEventListener('click', function() {
             const sky = document.querySelector('#skybox');
             sky.setAttribute('src', '#' + data.target);
-
             // 現在位置を更新
             document.querySelectorAll('.hotspot-container').forEach(function(container) {
               if (container.getAttribute('data-panorama') === data.target) {
@@ -57,22 +67,59 @@
           });
         }
       });
+
+      // テクスチャ読み込み管理コンポーネント
+      AFRAME.registerComponent('texture-loader', {
+        init: function() {
+          // 画像の読み込み状態を追跡
+          let loadedImages = 0;
+          const totalImages = 6; // 360度画像3枚 + サムネイル3枚
+          const loading = document.getElementById('loading');
+          
+          // 画像読み込み完了時の処理
+          function imageLoaded() {
+            loadedImages++;
+            if (loadedImages >= totalImages) {
+              // すべての画像が読み込まれたらローディング表示を非表示に
+              if (loading) {
+                loading.style.display = 'none';
+              }
+              console.log('すべての画像が読み込まれました');
+            }
+          }
+          
+          // 各画像の読み込み完了イベントを監視
+          const imageIds = ['pano1', 'pano2', 'pano3', 'thumb1', 'thumb2', 'thumb3'];
+          imageIds.forEach(id => {
+            const img = document.getElementById(id);
+            if (img.complete) {
+              imageLoaded();
+            } else {
+              img.addEventListener('load', imageLoaded);
+              img.addEventListener('error', function() {
+                console.error('画像の読み込みに失敗しました:', id);
+              });
+            }
+          });
+        }
+      });
     </script>
   </head>
   <body>
-    <a-scene>
+    <!-- ローディングインジケータ -->
+    <div id="loading">画像を読み込み中...</div>
+
+    <a-scene texture-loader>
       <!-- アセットの事前読み込み -->
-      <a-assets>
+      <a-assets timeout="10000">
         <!-- 360度画像 -->
         <img id="pano1" src="R0010034.JPG" crossorigin="anonymous">
         <img id="pano2" src="R0010095.JPG" crossorigin="anonymous">
         <img id="pano3" src="R0010036.JPG" crossorigin="anonymous">
-
         <!-- サムネイル画像（アイキャッチ） -->
         <img id="thumb1" src="R0010034.JPG" crossorigin="anonymous">
         <img id="thumb2" src="R0010095.JPG" crossorigin="anonymous">
         <img id="thumb3" src="R0010036.JPG" crossorigin="anonymous">
-
         <!-- 3Dモデル -->
         <a-asset-item id="dancing-model" src="akaei_HouseDancing (1).glb"></a-asset-item>
       </a-assets>
@@ -101,7 +148,6 @@
           rotation="0 0 0"
           scale="1 1 1">
         </a-entity>
-
         <!-- パノラマ3へのホットスポット -->
         <a-entity
           hotspot="target: pano3; thumbnail: thumb3"
@@ -124,7 +170,6 @@
           rotation="0 0 0"
           scale="1 1 1">
         </a-entity>
-
         <!-- パノラマ3へのホットスポット -->
         <a-entity
           hotspot="target: pano3; thumbnail: thumb3"
@@ -147,7 +192,6 @@
           rotation="0 0 0"
           scale="1 1 1">
         </a-entity>
-
         <!-- パノラマ2へのホットスポット -->
         <a-entity
           hotspot="target: pano2; thumbnail: thumb2"
