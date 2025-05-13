@@ -1,3 +1,17 @@
+<!-- 
+１つのGLBモデルの中に、複数のアニメーションを格納
+ ５秒後にGLBモデルのアニメーション切り替え
+
+
+ ※Blenderにて
+ ノンリニアアニメーション(NLAエディタ)にする
+ ※Blenderでは、動きをアニメーションと呼ぶみたいなんだけど、
+そのアニメを1まとまりにしたものをストリップって呼んでるらしい。
+NLAエディタでは、ストリップを操作するので、アニメーションのストリップ化が必要。
+参考サイト
+https://zenn.dev/rg687076/articles/cd9fae9ae5828d
+デフォルトの光源とカメラと立方体を全部選択 → 削除する。→削除しない方がよさそう…
+ -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,10 +25,10 @@
   <a-scene>
     <a-entity
       id="myModel"
-      gltf-model="./akaei4anime3.glb"
+      gltf-model="./akaei5anime.glb"
       position="0 1.5 -3"
       scale="3 3 3"
-      animation-mixer="clip: anime1; loop: repeat"
+      animation-mixer="clip: JogInCircle; loop: repeat"
     ></a-entity>
     <a-sky color="#ECECEC"></a-sky>
   </a-scene>
@@ -28,8 +42,8 @@
         
         // 5秒後にアニメーションを切り替える
         setTimeout(function () {
-          console.log('アニメーション2(anime2)に切り替えます');
-          modelEl.setAttribute('animation-mixer', 'clip', 'anime2');
+          console.log('アニメーション2(dyingStandup)に切り替えます');
+          modelEl.setAttribute('animation-mixer', 'clip', 'dyingStandup');
         }, 5000); // 5000ミリ秒 = 5秒
       });
     });

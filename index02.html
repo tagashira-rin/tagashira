@@ -1,0 +1,71 @@
+<!-- 
+GLBモデルのアニメーション切り替え時にマテリアルカラーを変更
+A-Frameでは、GLBモデルの特定のパーツのマテリアルを変更するには、
+Three.jsのAPIを使用してモデルの内部構造にアクセスする必要があります。
+以下のコードでは、アニメーション切り替え時に「Sphere」という名前のメッシュのマテリアルカラーを変更します。
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GLB Multiple Animations in A-Frame</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <!-- animation-mixerコンポーネントを明示的にインポート -->
+  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+</head>
+<body>
+  <a-scene>
+    <a-entity
+      id="myModel"
+      gltf-model="./akaei5anime.glb"
+      position="0 1.5 -3"
+      scale="3 3 3"
+      animation-mixer="clip: JogInCircle; loop: repeat"
+    ></a-entity>
+    <a-sky color="#ECECEC"></a-sky>
+  </a-scene>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modelEl = document.getElementById('myModel');
+      
+      // モデルの読み込みが完了してからアニメーション制御を行う
+      modelEl.addEventListener('model-loaded', function (evt) {
+        console.log('モデルが正常に読み込まれました');
+        
+        // モデルのThree.jsオブジェクトを取得
+        const modelObject = evt.detail.model;
+        
+        // 6秒後にアニメーションを切り替える
+        setTimeout(function () {
+          console.log('アニメーション2(dyingStandup)に切り替えます');
+          modelEl.setAttribute('animation-mixer', {
+            clip: 'dyingStandup'
+          });
+          
+          // モデル内の「Sphere」という名前のメッシュを探して色を変更
+          modelObject.traverse(function (node) {
+            if (node.isMesh && node.name === 'Sphere') {
+              console.log('Sphereメッシュを見つけました');
+              
+              // マテリアルがある場合は色を変更
+              if (node.material) {
+                // 単一のマテリアルの場合
+                if (!Array.isArray(node.material)) {
+                  node.material.color.set('#C8FF45');
+                } 
+                // 複数のマテリアルがある場合
+                else {
+                  node.material.forEach(mat => {
+                    mat.color.set('#C8FF45');
+                  });
+                }
+                console.log('Sphereの色を#C8FF45に変更しました');
+              }
+            }
+          });
+        }, 6000); // 6000ミリ秒 = 6秒
+      });
+    });
+  </script>
+</body>
+</html>
