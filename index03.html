@@ -1,0 +1,80 @@
+<!-- 
+ページ読込直後は、anime01を表示。
+  7.5秒後にanime02に切り替え   
+  さらに4.6秒後にanime03に切り替え
+  さらに8.2秒後にanime04に切り替え
+アニメーション開始から60秒後に自動的にページ遷移
+ -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GLB Multiple Animations in A-Frame</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <!-- animation-mixerコンポーネントを明示的にインポート -->
+  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+</head>
+<body>
+  <a-scene>
+    <a-entity
+      id="myModel"
+      gltf-model="./akaei6anime.glb"
+      position="0 1.5 -3"
+      scale="3 3 3"
+      animation-mixer="clip: anime01; loop: repeat"
+    ></a-entity>
+    
+    <!-- 単色背景から360度画像に変更 -->
+    <a-sky src="R0010095.JPG" rotation="0 0 0"></a-sky>
+    
+  </a-scene>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modelEl = document.getElementById('myModel');
+      
+      // モデルの読み込みが完了してからアニメーション制御を行う
+      modelEl.addEventListener('model-loaded', function () {
+        console.log('モデルが正常に読み込まれました');
+        
+        // 最初のアニメーション（anime01）は既にHTMLで設定済み
+        
+        // アニメーション開始から60秒後に自動的にページ遷移
+        setTimeout(function() {
+          console.log('60秒経過しました。ページ遷移を実行します。');
+          window.location.href = 'https://fuzzy-space-dollop-v6w9rqrp5gr7cwp5-8000.app.github.dev/';
+        }, 60000); // 60秒後
+        
+        // 7.5秒後にanime02に切り替え
+        setTimeout(function () {
+          console.log('アニメーション2(anime02)に切り替えます');
+          modelEl.setAttribute('animation-mixer', {
+            clip: 'anime02',
+            loop: 'repeat'
+          });
+          
+          // さらに4.6秒後にanime03に切り替え
+          setTimeout(function () {
+            console.log('アニメーション3(anime03)に切り替えます');
+            modelEl.setAttribute('animation-mixer', {
+              clip: 'anime03',
+              loop: 'repeat'
+            });
+            
+            // さらに8.2秒後にanime04に切り替え
+            setTimeout(function () {
+              console.log('アニメーション4(anime04)に切り替えます');
+              modelEl.setAttribute('animation-mixer', {
+                clip: 'anime04',
+                loop: 'repeat'
+              });
+            }, 8200); // 8.2秒後
+            
+          }, 4600); // 4.6秒後
+          
+        }, 7500); // 7.5秒後
+      });
+    });
+  </script>
+</body>
+</html>
