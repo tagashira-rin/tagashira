@@ -4,7 +4,7 @@
   7.5秒後にanime02に切り替え   
   さらに4.6秒後にanime03に切り替え
   さらに8.2秒後にanime04に切り替え
-　モデル表示から40秒後にページ遷移
+　モデル表示から30秒後にページ遷移
  -->
 
 <!DOCTYPE html>
@@ -54,11 +54,11 @@
           loop: 'repeat'
         });
         
-        // アニメーション開始から60秒後に自動的にページ遷移
+        // アニメーション開始から30秒後に自動的にページ遷移
         setTimeout(function() {
-          console.log('40秒経過しました。ページ遷移を実行します。');
-          window.location.href = 'https://fuzzy-space-dollop-v6w9rqrp5gr7cwp5-8000.app.github.dev/';
-        }, 40000); // 40秒後
+          console.log('30秒経過しました。ページ遷移を実行します。');
+          window.location.href = '.index.html';
+        }, 30000); // 30秒後
         
         // 7.5秒後にanime02に切り替え
         setTimeout(function () {
