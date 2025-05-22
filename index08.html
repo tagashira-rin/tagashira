@@ -1,0 +1,87 @@
+<!-- アニメーションを３回数繰り返し、position を (0,0,-5)から (0,0,-3)へ9秒かけて移動するサンプル
+  position="0 0 -5"
+  gltf-model="zombie.glb"
+  animation-mixer="clip: anime03; loop: false; repetitions: 3; timeScale: 1; clampWhenFinished: true;"
+  animation__position="property: position; to: 0 0 -3; dur: 9000; easing: easeInSine; loop: false;" 
+2025.05.22
+-->
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>A-Frame VR アプリ</title>
+    <meta name="description" content="360度画像とglbモデルを表示するVRアプリ">
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      .a-enter-vr-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+      }
+    </style>
+  </head>
+  <body>
+    <a-scene>
+      <!-- 360度画像の読み込み -->
+      <a-sky src="R0010034.JPG" rotation="0 -90 0"></a-sky>
+      <!-- glbモデルの表示 -->
+      <a-entity
+        id="animated-model"
+        position="0 0 -5"
+        scale="2 2 2"
+        rotation="0 0 0"
+        gltf-model="zombie.glb"
+        animation-mixer="clip: anime03; loop: false; repetitions: 3; timeScale: 1; clampWhenFinished: true;"
+        animation__position="property: position; to: 0 0 -3; dur: 9000; easing: easeInSine; loop: false;"
+        >
+      </a-entity>
+      <!-- カメラとカーソル -->
+      <a-entity camera look-controls position="0 1.6 0">
+        <a-cursor id="cursor" color="white"></a-cursor>
+      </a-entity>
+      <!-- 環境光 -->
+      <a-light type="ambient" color="#BBB"></a-light>
+      <a-light type="directional" color="#FFF" intensity="0.6" position="-0.5 1 1"></a-light>
+    </a-scene>
+    <script>
+      // モデルが読み込まれたときのイベントリスナー
+      document.querySelector('#animated-model').addEventListener('model-loaded', function() {
+        console.log('モデルが読み込まれました');
+        // モデルのアニメーションを制御するための追加コード
+        const model = document.querySelector('#animated-model').object3D;
+        console.log('モデル情報:', model);
+        
+        // アニメーションミキサーを取得
+        const animatedModel = document.querySelector('#animated-model');
+        const mixer = animatedModel.components['animation-mixer'].mixer;
+        
+        if (mixer) {
+          // アニメーションが終了したときのイベントリスナーを追加
+          animatedModel.addEventListener('animation-finished', function(e) {
+            console.log('アニメーションが終了しました:', e.detail.name);
+            // アニメーションの最後のフレームを保持
+            const action = mixer.clipAction(e.detail.action.getClip());
+            if (action) {
+              action.clampWhenFinished = true;
+              action.enabled = true;
+            }
+          });
+        }
+      });
+
+      // シーンが読み込まれたときのイベントリスナー
+      document.querySelector('a-scene').addEventListener('loaded', function() {
+        console.log('A-Frameシーンが読み込まれました');
+      });
+    </script>
+  </body>
+</html>
