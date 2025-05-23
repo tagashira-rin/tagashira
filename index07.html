@@ -88,7 +88,10 @@
           // アニメーション1を設定
           modelEl.setAttribute('animation-mixer', {
             clip: 'anime01',
-            loop: 'repeat'
+            loop: 'false',
+            repetitions: '2',
+            timeScale: '1',
+            clampWhenFinished: 'true'
           });
           
           // sound01を再生
@@ -136,7 +139,7 @@
               
             }, 4600); // 4.6秒後
             
-          }, 7500); // 7.5秒後
+          }, 12500); // 7.5秒後
           
         }, 15000); // 15秒後
       }
