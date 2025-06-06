@@ -17,7 +17,11 @@
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 </head>
 <body>
-  <a-scene>
+  <a-scene vr-mode-ui="enabled: true">
+    <!-- Controller -->
+    <a-entity laser-controls="hand: left" raycaster="objects: .collidable; far: 5"></a-entity>
+    <a-entity laser-controls="hand: right" raycaster="objects: .collidable; far: 5"></a-entity>
+
     <!-- 最初は非表示(visible="false")にしておく -->
     <a-entity
       id="myModel"
@@ -49,6 +53,16 @@
   
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      // 【追加】A-Frameシーンの準備完了を待ってからVRモードに切り替え
+      const sceneEl = document.querySelector('a-scene');
+      sceneEl.addEventListener('loaded', function () {
+        console.log('A-Frameシーンが読み込まれました。VRモードに切り替えます。');
+        // VRモードに自動切り替え
+        if (sceneEl.enterVR) {
+          sceneEl.enterVR();
+        }
+      });
+
       const modelEl = document.getElementById('myModel');
       const skyEl = document.getElementById('sky');
       const bgmEl = document.getElementById('bgm');
@@ -66,6 +80,7 @@
       
       // クリック/タップでスタート
       document.addEventListener('click', startExperience);
+      sceneEl.addEventListener('triggerdown', startExperience);
       
       function startExperience() {
         if (hasStarted) return; // 二重実行防止
@@ -73,6 +88,7 @@
         
         // クリックイベントリスナーを削除
         document.removeEventListener('click', startExperience);
+        sceneEl.removeEventListener('triggerdown', startExperience);
         
         console.log('ユーザーアクションを検出しました。BGMを開始します。');
         bgmEl.components.sound.playSound();
@@ -85,7 +101,7 @@
           modelEl.setAttribute('visible', true);
 
           //アニメーション1を設定（anime01 , 繰り返し回数2回  再生速度1.15倍）
-          modelEl.setAttribute('animation-mixer', {clip: 'anime01',loop: 'false',repetitions: '2',timeScale: '1.15',clampWhenFinished: 'true'});
+          modelEl.setAttribute('animation-mixer', {clip: 'anime01',loop: 'false',repetitions: '2',timeScale: '0.15',clampWhenFinished: 'true'});
           //アニメーション1の初期表示位置の設定
           modelEl.setAttribute('position', '0 -1.5 -5');
           //アニメーション1で移動させる先の座標(0,-1.5,-1)と移動時間の設定8.0秒
